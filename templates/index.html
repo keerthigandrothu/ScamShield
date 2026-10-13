@@ -1,0 +1,473 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScamShield - Scam Detection</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #07111f;
+    color: #eef6ff;
+}
+
+header {
+    padding: 22px 8%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #203249;
+    background: #0b1728;
+}
+
+.logo {
+    font-size: 28px;
+}
+
+header h1 {
+    font-size: 25px;
+    margin: 0;
+    color: #48e0c0;
+}
+
+header p {
+    margin: 5px 0 0;
+    color: #a9b9cb;
+    font-size: 13px;
+}
+
+main {
+    width: 90%;
+    max-width: 1000px;
+    margin: 45px auto;
+}
+
+.hero {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.hero h2 {
+    font-size: 36px;
+    margin-bottom: 12px;
+}
+
+.hero h2 span {
+    color: #48e0c0;
+}
+
+.hero p {
+    color: #a9b9cb;
+    line-height: 1.7;
+}
+
+.checker {
+    max-width: 720px;
+    margin: auto;
+    padding: 28px;
+    background: #101f32;
+    border: 1px solid #253b52;
+    border-radius: 18px;
+}
+
+label {
+    display: block;
+    margin: 16px 0 9px;
+    font-weight: bold;
+}
+
+select, textarea, input {
+    width: 100%;
+    padding: 14px;
+    background: #091625;
+    color: #eef6ff;
+    border: 1px solid #30465f;
+    border-radius: 9px;
+    font-size: 15px;
+    outline: none;
+}
+
+select:focus, textarea:focus, input:focus {
+    border-color: #48e0c0;
+}
+
+textarea {
+    min-height: 150px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+#claimSection {
+    display: none;
+}
+
+button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 15px;
+    border: none;
+    border-radius: 9px;
+    background: #48e0c0;
+    color: #07111f;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #75f0d6;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+#result {
+    display: none;
+    margin-top: 22px;
+    padding: 18px;
+    border-radius: 10px;
+    background: #091625;
+    border: 1px solid #30465f;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+#result h3 {
+    margin-top: 0;
+    color: #48e0c0;
+}
+
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 45px;
+}
+
+.feature {
+    padding: 24px;
+    background: #101f32;
+    border: 1px solid #253b52;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.feature:hover, .feature:focus {
+    border-color: #48e0c0;
+    transform: translateY(-3px);
+    outline: none;
+}
+
+.feature .icon {
+    font-size: 30px;
+}
+
+.feature h3 {
+    color: #48e0c0;
+}
+
+.feature p {
+    color: #a9b9cb;
+    line-height: 1.6;
+}
+
+footer {
+    text-align: center;
+    color: #8fa3b8;
+    padding: 25px;
+    border-top: 1px solid #203249;
+    font-size: 13px;
+}
+
+@media (max-width: 650px) {
+    .hero h2 {
+        font-size: 28px;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+    }
+
+    .checker {
+        padding: 19px;
+    }
+
+    main {
+        margin-top: 30px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">🛡️</div>
+    <div>
+        <h1>ScamShield</h1>
+        <p>Your smart online scam checker</p>
+    </div>
+</header>
+
+<main>
+    <section class="hero">
+        <h2>Stay Safe. <span>Spot Scams.</span></h2>
+        <p>Check suspicious messages, website links and YouTube video claims.<br>
+        Think before you click!</p>
+    </section>
+
+    <section class="checker">
+        <h2>🔎 Check for Scams</h2>
+        <p style="color:#a9b9cb">
+            Choose what you want to check and enter the content below.
+        </p>
+
+        <label for="mode">Choose check type</label>
+        <select id="mode" onchange="updateMode()">
+            <option value="message">💬 Message (English / Telugu)</option>
+            <option value="url">🌐 Website link</option>
+            <option value="video">▶️ YouTube video claim</option>
+        </select>
+
+        <div id="claimSection">
+            <label for="claim">What claim do you want to verify? (Optional)</label>
+            <input id="claim" type="text"
+                   placeholder="Example: This video promises free money">
+        </div>
+
+        <label for="content">Enter message or link</label>
+        <textarea id="content"
+            placeholder="Paste a suspicious message in English or Telugu"></textarea>
+
+        <button id="checkButton" onclick="checkContent()">
+            🛡️ Check Now
+        </button>
+
+        <div id="result" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="features">
+        <div class="feature" onclick="selectMode('message')"
+             role="button" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectMode('message')}">
+            <div class="icon">💬</div>
+            <h3>Message Check</h3>
+            <p>Check suspicious messages in English or Telugu for common scam warning signs.</p>
+        </div>
+
+        <div class="feature" onclick="selectMode('url')"
+             role="button" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectMode('url')}">
+            <div class="icon">🌐</div>
+            <h3>Link Check</h3>
+            <p>Click here to switch to website link checking.</p>
+        </div>
+
+        <div class="feature" onclick="selectMode('video')"
+             role="button" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectMode('video')}">
+            <div class="icon">▶️</div>
+            <h3>YouTube Claim Check</h3>
+            <p>Submit a YouTube link and an optional claim for checking.</p>
+        </div>
+    </section>
+</main>
+
+<footer>
+    ScamShield — Stay alert. Stay protected.<br>
+    Results are automated checks, not a guarantee that a message or website is safe.
+</footer>
+
+<script>
+const mode = document.getElementById("mode");
+const content = document.getElementById("content");
+const claimSection = document.getElementById("claimSection");
+const claim = document.getElementById("claim");
+const result = document.getElementById("result");
+const checkButton = document.getElementById("checkButton");
+
+function selectMode(selectedMode) {
+    mode.value = selectedMode;
+    updateMode();
+    document.querySelector(".checker").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+    content.focus({ preventScroll: true });
+}
+
+function updateMode() {
+    claimSection.style.display =
+        mode.value === "video" ? "block" : "none";
+
+    content.placeholder = {
+        message: "Paste a suspicious message in English or Telugu",
+        url: "Paste the full website URL, including https://",
+        video: "Paste the YouTube video URL"
+    }[mode.value];
+
+    result.style.display = "none";
+}
+
+async function checkContent() {
+    const value = content.value.trim();
+
+    if (!value) {
+        alert("Please enter a message or link first.");
+        content.focus();
+        return;
+    }
+
+    let endpoint;
+
+    if (mode.value === "message") {
+        endpoint = "/check";
+    } else if (mode.value === "url") {
+        endpoint = "/check-url";
+    } else {
+        endpoint = "/check-video";
+    }
+
+    let payload;
+
+    if (mode.value === "message") {
+        payload = { message: value };
+    } else if (mode.value === "url") {
+        payload = { url: value };
+    } else {
+        payload = {
+            url: value,
+            claim: claim.value.trim()
+        };
+    }
+
+    checkButton.disabled = true;
+    checkButton.textContent = "⏳ Checking...";
+    result.style.display = "block";
+    result.textContent = "Please wait while ScamShield checks your submission...";
+
+    try {
+        const response = await fetch(
+            "http://127.0.0.1:8000" + endpoint,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.detail || data.error || "The server could not check this submission."
+            );
+        }
+
+        result.replaceChildren();
+
+        const heading = document.createElement("h3");
+        heading.textContent = "🔎 Check Result";
+        result.appendChild(heading);
+
+        const verdict = String(data?.verdict || "").toUpperCase();
+
+        if (verdict.includes("SUSPICIOUS") ||
+            verdict.includes("SCAM") ||
+            verdict.includes("HIGH RISK") ||
+            verdict.includes("MALICIOUS")) {
+            result.style.backgroundColor = "#FEE2E2";
+            result.style.border = "2px solid #DC2626";
+            result.style.color = "#991B1B";
+            result.style.padding = "16px";
+            result.style.borderRadius = "12px";
+        }else if (verdict.includes("SAFE") &&
+           !verdict.includes("UNSAFE") &&
+           !verdict.includes("NOT SAFE")) {
+            result.style.backgroundColor = "#DCFCE7";
+            result.style.border = "2px solid #16A34A";
+            result.style.color = "#166534";
+            result.style.padding = "16px";
+            result.style.borderRadius = "12px";
+        } else {
+            result.style.backgroundColor = "#FEF3C7";
+            result.style.border = "2px solid #D97706";
+            result.style.color = "#92400E";
+            result.style.padding = "16px";
+            result.style.borderRadius = "12px";
+        }
+
+        function displayValue(label, value) {
+            if (value === undefined || value === null || value === "") {
+                return;
+            }
+
+            const line = document.createElement("p");
+            const strong = document.createElement("strong");
+            strong.textContent = label + ": ";
+            line.appendChild(strong);
+
+            const text = document.createElement("span");
+            text.textContent = typeof value === "object"
+                ? JSON.stringify(value, null, 2)
+                : String(value);
+
+            line.appendChild(text);
+            result.appendChild(line);
+        }
+
+        if (typeof data === "string") {
+            displayValue("Result", data);
+        } else if (typeof data === "object") {
+            for (const [key, value] of Object.entries(data)) {
+                const label = key
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, letter => letter.toUpperCase());
+                displayValue(label, value);
+            }
+        } else {
+            displayValue("Result", data);
+        }
+
+        if (!result.querySelector("p")) {
+            displayValue("Result", "The server returned no details.");
+        }
+
+    } catch (error) {
+        result.replaceChildren();
+
+        const heading = document.createElement("h3");
+        heading.textContent = "⚠️ Unable to Check";
+        result.appendChild(heading);
+
+        const message = document.createElement("p");
+        message.textContent =
+            error.message.includes("Failed to fetch")
+            ? "Cannot connect to the ScamShield backend. Make sure your backend is running at http://127.0.0.1:8000."
+            : error.message;
+
+        result.appendChild(message);
+    } finally {
+        checkButton.disabled = false;
+        checkButton.textContent = "🛡️ Check Now";
+    }
+}
+
+updateMode();
+</script>
+
+</body>
+</html>
